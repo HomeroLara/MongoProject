@@ -3,7 +3,8 @@ import controller from '../controllers/bookController';
 
 const router = express.Router();
 
-router.post('/create/book', controller.createBook);
-router.get('/get/books', controller.getAllBooks);
+router.post('/', controller.createBook);
+router.get('/', controller.getAllBooks);
+router.get('/:id', controller.getBookById);
 
 export = router;
