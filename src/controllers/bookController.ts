@@ -42,20 +42,6 @@ const getBookById = (req: Request, res: Response, next: NextFunction) => {
         });
 };
 
-/*
-var getBook = function (req, res) {
-    book_1.default.findById(req.params.id, function (err, book) {
-        if (err) {
-            res.send(err);
-        }
-        else {
-            res.send(book);
-        }
-    });
-};
-
-
-*/
 const getAllBooks = (req: Request, res: Response, next: NextFunction) => {
     Book.find()
         .exec()
