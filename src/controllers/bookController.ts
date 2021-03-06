@@ -1,62 +1,46 @@
-import {Request, Response } from 'express';
-import Book from '../book';
+import { NextFunction, Request, Response } from 'express';
+import mongoose from 'mongoose';
+import Book from '../models/book';
 
+const createBook = (req: Request, res: Response, next: NextFunction) => {
+    let { author, title } = req.body;
 
-export let allBooks = (req: Request, res: Response) => {
-    let books = Book.find((err: any, books: any) => {
-        if(err){
-            res.send(err);
-        }else{
-            res.send(books);      
-        }
-    })
-}
+    const book = new Book({
+        _id: new mongoose.Types.ObjectId(),
+        author,
+        title
+    });
 
-
-export let getBook = (req: Request, res: Response) => {
-    Book.findById(req.params.id, (err: any, book: any) => {
-        if(err){
-            res.send(err);
-        }else{
-            res.send(book);
-        }
-    })
-}
-
-export let addBook = (req: Request, res: Response) => {
-    let book = new Book(req.body);
-    book.save((err: any) => {
-        if (err) {
-          res.send(err);
-        } else {
-          res.send(book);
-        }
-    })
-}
-
-export let deleteBook = (req: Request, res: Response) => {
-  let book = Book.deleteOne({ _id: req.params.id }).then(function (
-    err: any,
-    result: any
-  ) {
-    if (err) {
-      res.send(err);
-    } else {
-      res.send('Successfully Updated book.');
-    }
-  });
+    return book
+        .save()
+        .then((result) => {
+            return res.status(201).json({
+                book: result
+            });
+        })
+        .catch((error) => {
+            return res.status(500).json({
+                message: error.message,
+                error
+            });
+        });
 };
 
-export let updateBook = (req: Request, res: Response) => {
-  Book.findByIdAndUpdate(req.params.id, req.body).then(function (
-    err: any,
-    book: any
-  ) {
-    if (err) {
-      res.send(err);
-    } else {
-      res.send('Successfully Updated book.');
-    }
-  });
+const getAllBooks = (req: Request, res: Response, next: NextFunction) => {
+    Book.find()
+        .exec()
+        .then((books) => {
+            return res.status(200).json({
+                books: books,
+                count: books.length
+            });
+        })
+        .catch((error) => {
+            return res.status(500).json({
+                message: error.message,
+                error
+            });
+        });
 };
 
+export default { createBook, getAllBooks };
